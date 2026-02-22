@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ngf-autoscaler
+  namespace: nginx-gateway
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ngf-autoscaler
+rules:
+  # Permission to list nodes
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["list"]
+  # Permission to get and scale the deployment
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ngf-autoscaler
+subjects:
+  - kind: ServiceAccount
+    name: ngf-autoscaler
+    namespace: nginx-gateway
+roleRef:
+  kind: ClusterRole
+  name: ngf-autoscaler
+  apiGroup: rbac.authorization.k8s.io

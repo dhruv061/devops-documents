@@ -1,0 +1,36 @@
+[Unit]
+Description=MongoDB Incremental Sync Service (Atlas to Self-Hosted)
+Documentation=https://docs.mongodb.com/
+After=network.target mongod.service
+Wants=mongod.service
+
+[Service]
+Type=simple
+User=azureuser
+Group=azureuser
+WorkingDirectory=/home/azureuser/mongodb-migration-scripts
+
+# Main command - runs continuous sync
+ExecStart=/bin/bash /home/azureuser/mongodb-migration-scripts/incremental_sync.sh continuous
+
+# Restart on failure
+Restart=on-failure
+RestartSec=10
+
+# Logging - output to journald
+StandardOutput=journal
+StandardError=journal
+
+# Give it a nice name in journald
+SyslogIdentifier=mongodb-incremental-sync
+
+# Environment
+Environment=HOME=/home/azureuser
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+# Timeouts
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

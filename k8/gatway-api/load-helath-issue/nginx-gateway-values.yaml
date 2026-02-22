@@ -1,0 +1,26 @@
+nginxGateway:
+  replicaCount: 1
+  # We add this so Cluster Autoscaler can delete nodes even if this pod is on it
+  podAnnotations:
+    cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+
+# Spread pods across different nodes
+# We relax this so if a pod MUST move during a transition, it can.
+# This prevents the "Pending" pod problem during node deletion.
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: nginx-gateway-fabric
+        topologyKey: kubernetes.io/hostname
+        
+# affinity:
+#   podAntiAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       - labelSelector:
+#           matchLabels:
+#             app.kubernetes.io/name: nginx-gateway-fabric
+#         topologyKey: kubernetes.io/hostname

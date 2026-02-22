@@ -1,0 +1,22 @@
+[Unit]
+Description=MongoDB Migration Service
+After=network.target
+
+[Service]
+Type=simple
+User=azureuser
+WorkingDirectory=/home/azureuser/mongodb-migration-scripts
+ExecStart=/bin/bash /home/azureuser/mongodb-migration-scripts/mongodb_migration.sh start
+Restart=on-failure
+RestartSec=30
+StandardOutput=append:/tmp/mongodb-migration/migration.log
+StandardError=append:/tmp/mongodb-migration/migration.log
+
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+
+# Resource limits
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

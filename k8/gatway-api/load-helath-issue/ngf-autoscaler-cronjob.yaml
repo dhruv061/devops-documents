@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ngf-autoscaler
+  namespace: nginx-gateway
+spec:
+  schedule: "*/5 * * * *"  # Every 5 minutes
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          serviceAccountName: ngf-autoscaler
+          restartPolicy: OnFailure
+          containers:
+            - name: autoscaler
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  # Count Ready nodes
+                  NODE_COUNT=$(kubectl get nodes --no-headers | grep -c " Ready")
+                  
+                  # Ensure minimum 1 replica always runs
+                  if [ "$NODE_COUNT" -lt 1 ]; then
+                    NODE_COUNT=1
+                  fi
+                  
+                  # Get current replica count
+                  CURRENT_REPLICAS=$(kubectl get deployment ngf-nginx-gateway-fabric -n nginx-gateway -o jsonpath='{.spec.replicas}')
+                  
+                  echo "Nodes: $NODE_COUNT, Current replicas: $CURRENT_REPLICAS"
+                  
+                  # Scale if different
+                  if [ "$NODE_COUNT" -ne "$CURRENT_REPLICAS" ]; then
+                    echo "Scaling ngf-nginx-gateway-fabric to $NODE_COUNT replicas..."
+                    kubectl scale deployment ngf-nginx-gateway-fabric -n nginx-gateway --replicas=$NODE_COUNT
+                  else
+                    echo "No scaling needed."
+                  fi
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 64Mi
