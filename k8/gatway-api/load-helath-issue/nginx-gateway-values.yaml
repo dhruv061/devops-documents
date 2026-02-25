@@ -3,6 +3,8 @@ nginxGateway:
   # We add this so Cluster Autoscaler can delete nodes even if this pod is on it
   podAnnotations:
     cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+  snippetsFilters:
+    enable: true #It allows you to inject raw NGINX configuration (like location blocks, proxy_set_header, or return statements) directly into the generated nginx.conf thru SnippetsFilter File.
 
 # Spread pods across different nodes
 # We relax this so if a pod MUST move during a transition, it can.
