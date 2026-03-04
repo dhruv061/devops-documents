@@ -7,7 +7,7 @@ helm install ngf oci://ghcr.io/nginxinc/charts/nginx-gateway-fabric \
   --create-namespace \
   --version 1.5.0 \
   --wait
-
+  
 # Step 3: Verify
 kubectl get pods -n nginx-gateway
 kubectl get gatewayclass
