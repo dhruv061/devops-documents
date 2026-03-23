@@ -1020,7 +1020,9 @@ By default, pods **do not auto-restart** when secrets change — you must manual
 ```bash
 helm repo add stakater https://stakater.github.io/stakater-charts
 helm repo update
-helm install reloader stakater/reloader --namespace external-secrets
+helm install reloader stakater/reloader \
+  --namespace reloader \
+  --create-namespace
 ```
 
 **Add this annotation to each Deployment:**
