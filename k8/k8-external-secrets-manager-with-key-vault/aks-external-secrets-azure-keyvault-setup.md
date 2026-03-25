@@ -1040,6 +1040,29 @@ metadata:
 
 ---
 
+### 15.6 🗑️ Delete All Secrets (Bulk)
+
+**Scenario:** You need to completely clear out a Key Vault (e.g., to start fresh or during decommission).
+
+Instead of clicking through the portal 100 times, you can use the provided `delete-all-secrets.sh` script to delete all secrets from a specific Key Vault at once.
+
+**Step 1 — Make the script executable:**
+```bash
+chmod +x delete-all-secrets.sh
+```
+
+**Step 2 — Run the script with the Vault name:**
+```bash
+# Example: Deleting all secrets from the backend Key Vault
+./delete-all-secrets.sh backend-kv
+```
+
+**Step 3 — Follow the Prompt:**
+The script will count the secrets, show you a warning, and ask for absolute confirmation (`y/N`) before deleting anything.
+
+> [!NOTE]
+> This command performs a **soft-delete**. The secrets will go to the "Deleted secrets" bin in Azure and can be recovered for 90 days. If you want to permanently purge them, you must do it from the Azure Portal (or uncomment the purge line in the script, provided you have purge permissions).
+
 ---
 
 ## Verification & Troubleshooting
