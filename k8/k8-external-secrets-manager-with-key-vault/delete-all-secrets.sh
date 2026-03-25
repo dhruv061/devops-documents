@@ -36,7 +36,7 @@ fi
 # Loop through and delete each secret
 COUNT=0
 for SECRET_NAME in $SECRETS; do
-  ((COUNT++))
+  COUNT=$((COUNT + 1))
   echo "[$COUNT/$TOTAL] Deleting secret: $SECRET_NAME..."
   
   # Delete the secret
