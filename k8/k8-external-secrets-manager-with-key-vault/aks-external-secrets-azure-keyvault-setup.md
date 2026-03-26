@@ -190,6 +190,10 @@ chmod +x upload-to-keyvault.sh
 > **Dry Run Mode**: To see what will be uploaded without making any changes, run:
 > `DRY_RUN=true ./upload-to-keyvault.sh backend.env backend-kv`
 
+> [!NOTE]
+> **Why do the uploaded secrets have hyphens instead of underscores?**
+> Azure Key Vault strictly forbids underscores `_` in secret names. The upload script automatically converts your local `DB_HOST` format into `DB-HOST` to upload it successfully. Later on, External Secrets Operator will automatically convert it back to `DB_HOST` before injecting it into your Kubernetes Pod!
+
 ### Option B: Portal Steps (Manual)
 
 1. Go to **Key vaults** → Click the vault (e.g., `backend-kv`)
