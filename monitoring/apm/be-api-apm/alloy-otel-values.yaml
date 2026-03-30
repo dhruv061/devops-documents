@@ -1,0 +1,48 @@
+fullnameOverride: "alloy-otel"
+
+alloy:
+  extraPorts:
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+      protocol: TCP
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      protocol: TCP
+  configMap:
+    content: |
+      // ===== OTLP Receiver =====
+      otelcol.receiver.otlp "default" {
+        http {
+          endpoint = "0.0.0.0:4318"
+        }
+        grpc {
+          endpoint = "0.0.0.0:4317"
+        }
+
+        output {
+          metrics = [otelcol.processor.batch.default.input]
+        }
+      }
+
+      // ===== Batch Processor (reduces network overhead) =====
+      otelcol.processor.batch "default" {
+        timeout = "5s"
+        send_batch_size = 1000
+
+        output {
+          metrics = [otelcol.exporter.prometheus.to_prometheus.input]
+        }
+      }
+
+      // ===== Export to your existing Prometheus =====
+      otelcol.exporter.prometheus "to_prometheus" {
+        forward_to = [prometheus.remote_write.existing_prometheus.receiver]
+      }
+
+      prometheus.remote_write "existing_prometheus" {
+        endpoint {
+          url = "http://k8s-prometheus-kube-promet-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
+        }
+      }

@@ -1,0 +1,19 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: artha-otel-instrumentation
+  namespace: monitoring
+spec:
+  exporter:
+    endpoint: http://alloy-otel.monitoring.svc.cluster.local:4318 # Will create this in Step 4
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_traceidratio
+    argument: "0.25" # Sample 25% of traces to reduce overhead
+  nodejs:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:latest
+    env:
+      - name: OTEL_NODE_ENABLED_INSTRUMENTATIONS
+        value: "express,http,net,dns,mongoose,redis,kafkajs,pg,mysql,mysql2,graphql,amqplib"
