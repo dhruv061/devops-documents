@@ -19,7 +19,7 @@ Open `ci-variable-import.sh` and update the following variables in the `CONFIG` 
 
 ```bash
 # ========= CONFIG =========
-GITLAB_URL="https://git.knovator.in"      # Your GitLab URL
+GITLAB_URL="https://git.xxxx"      # Your GitLab URL
 PROJECT_ID="726"                          # Your Project ID (found on Project Overview page)
 PRIVATE_TOKEN="your_token_here"           # The PAT you generated in Step 1
 
