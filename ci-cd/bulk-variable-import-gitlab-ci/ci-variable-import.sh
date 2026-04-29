@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ========= CONFIG =========
-GITLAB_URL="https://git.knovator.in"
+GITLAB_URL="git-link-url"
 PROJECT_ID="726"   # Replace with your project ID
 PRIVATE_TOKEN="PAT-XXXXXXXXXXXXXXXXXXXXXXXX"  # Replace with your GitLab Personal Access Token
 
